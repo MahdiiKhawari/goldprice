@@ -1,0 +1,218 @@
+<!doctype html>
+<html lang="fa">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>ماشین‌حساب طلا — افغانستان</title>
+<style>
+:root{
+  --bg:#f4f6f8; --card-bg:#fff; --accent:#1f7a8c; --accent-hover:#145c6b;
+  --muted:#6b7280; --text:#111827; --success:#16a34a; --error:#dc2626;
+}
+body.dark{
+  --bg:#111827; --card-bg:#1f2937; --accent:#3b82f6; --accent-hover:#2563eb;
+  --muted:#9ca3af; --text:#f9fafb; --success:#22c55e; --error:#f87171;
+}
+body{margin:0;font-family:"Segoe UI", Roboto, "Helvetica Neue", Arial,sans-serif;background:var(--bg);color:var(--text);transition:0.3s;}
+.wrap{max-width:780px;margin:30px auto;padding:20px;position:relative;}
+.card{background:var(--card-bg);border-radius:16px;padding:28px;box-shadow:0 8px 20px rgba(0,0,0,0.1);transition:0.3s;}
+h1{font-size:22px;margin-bottom:10px;text-align:right;direction:rtl;}
+p.lead{color:var(--muted);margin-bottom:20px;text-align:right;direction:rtl;}
+.grid{display:grid;gap:16px;grid-template-columns:1fr 1fr;margin-bottom:20px;}
+label{font-size:14px;margin-bottom:6px;display:block;color:var(--text);text-align:right;direction:rtl;}
+input[type="number"]{width:100%;padding:12px;font-size:15px;border-radius:10px;border:1px solid #e6e9ee;background:var(--card-bg);color:var(--text);box-sizing:border-box;text-align:right;transition:0.3s;}
+input[type="number"]:focus{border-color:var(--accent);outline:none;transform:scale(1.02);}
+.controls{display:flex;flex-wrap:wrap;gap:10px;justify-content:flex-end;margin-top:10px;}
+button{padding:10px 16px;border:none;border-radius:10px;font-weight:600;cursor:pointer;transition:0.2s;}
+button:hover{transform:scale(1.05);}button:active{transform:scale(0.97);}
+button#calcBtn{background:var(--accent);color:#fff;}button#calcBtn:hover{background:var(--accent-hover);}
+button.secondary{background:#e6eef1;color:#0f172a;}body.dark button.secondary{background:#1e2937;color:#f9fafb;}
+.results{margin-top:20px;display:grid;gap:12px;}
+.row{display:flex;justify-content:space-between;align-items:center;background:#fbfdff;border:1px solid #eef2f6;border-radius:10px;padding:12px 14px;font-size:15px;transition:0.3s;}
+body.dark .row{background:#1f2937;border:1px solid #334155;color:var(--text);}
+.small{font-size:13px;color:var(--muted);}
+.note{font-size:13px;color:var(--muted);}
+.error-msg{margin-top:10px;display:none;}
+.footer{margin-top:20px;display:flex;flex-wrap:wrap;justify-content:space-between;gap:12px;}
+.modal-bg{position:fixed;inset:0;background:rgba(0,0,0,0.5);display:none;align-items:center;justify-content:center;z-index:50;opacity:0;transition:0.3s;}
+.modal-bg.show{display:flex;opacity:1;}
+.modal{background:var(--card-bg);padding:24px;border-radius:16px;width:90%;max-width:400px;text-align:center;direction:rtl;box-shadow:0 8px 25px rgba(0,0,0,0.2);color:var(--text);transform:translateY(-20px);transition:0.3s;}
+.modal-bg.show .modal{transform:translateY(0);}
+.modal h2{margin-bottom:12px;font-size:18px;}
+.modal a img{width:40px;height:40px;transition:0.2s;filter:invert(0);}
+.modal a img:hover{transform:scale(1.2);}
+.modal .close{margin-top:14px;width:100%;padding:10px;border-radius:10px;background:#e6eef1;border:none;cursor:pointer;}body.dark .modal .close{background:#1e2937;color:#f9fafb;}
+.menu-btn{position:absolute;top:20px;left:20px;background:var(--accent);color:#fff;border:none;padding:10px 12px;border-radius:8px;font-size:18px;cursor:pointer;transition:0.2s;}
+.menu-btn:hover{transform:rotate(90deg) scale(1.1);}
+.menu{display:none;position:absolute;top:60px;left:20px;background:var(--card-bg);border-radius:10px;box-shadow:0 6px 15px rgba(0,0,0,0.2);padding:12px;width:240px;transition:0.3s;opacity:0;transform:translateY(-10px);}
+.menu.show{display:block;opacity:1;transform:translateY(0);}
+.menu button,.menu a{width:100%;margin-bottom:8px;text-align:right;}
+.menu button:last-child,.menu a:last-child{margin-bottom:0;}
+.lang-btn{width:100%;padding:10px;border-radius:10px;border:1px solid #ccc;background:var(--card-bg);cursor:pointer;display:flex;justify-content:space-between;align-items:center;font-weight:600;}
+.lang-options{display:none;flex-direction:column;margin-top:8px;gap:6px;}
+.lang-options button{width:100%;padding:8px;border-radius:8px;background:#e6eef1;transition:0.2s;}
+.lang-options button:hover{background:var(--accent);color:#fff;}
+@media(max-width:600px){.grid{grid-template-columns:1fr}.controls{justify-content:stretch;}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <button class="menu-btn" id="menuBtn">&#9776;</button>
+  <div class="menu" id="menu">
+    <button id="toggleTheme" class="secondary">تغییر تم</button>
+    <button id="aboutBtn" class="secondary">درباره ما</button>
+    <div>
+      <button class="lang-btn" id="langBtn">🌐 زبان</button>
+      <div class="lang-options" id="langOptions">
+        <button data-lang="fa">فارسی</button>
+        <button data-lang="en">English</button>
+      </div>
+    </div>
+    <div style="margin-top:12px;padding:12px;background:var(--card-bg);border-radius:10px;text-align:center;box-shadow:0 4px 12px rgba(0,0,0,0.1);">
+      <a href="https://www.investing.com/commodities/gold" target="_blank" style="text-decoration:none;color:var(--accent);font-weight:600;">📈 نرخ لحظه‌ای اونس جهانی</a>
+    </div>
+  </div>
+
+  <div class="card">
+    <h1 id="title">ماشین‌حساب طلای افغانستان</h1>
+    <p class="lead" id="lead">قیمت اونس جهانی و نرخ دلار را وارد کنید تا قیمت هر گرم طلا (۲۴/۲۱/۱۸ عیار) محاسبه شود.</p>
+    <div class="grid">
+      <div><label for="ounce" id="labelOunce">قیمت اونس جهانی (دلار)</label><input id="ounce" type="number" step="0.01" min="0" value="4223"/></div>
+      <div><label for="dollar" id="labelDollar">نرخ دلار (AFN)</label><input id="dollar" type="number" step="0.01" min="0" value="66.25"/></div>
+    </div>
+    <div class="controls">
+      <button id="calcBtn">محاسبه کن</button>
+      <button id="copyBtn" class="secondary">کپی نتایج</button>
+      <button id="resetBtn" class="secondary">ریست</button>
+    </div>
+    <div id="err" class="error-msg"></div>
+    <div class="results" id="results">
+      <div class="row"><div class="small" id="r24usd">قیمت هر گرم (۲۴ عیار) — دلار</div><div id="g24usd">—</div></div>
+      <div class="row"><div class="small" id="r24afn">قیمت هر گرم (۲۴ عیار) — افغانی</div><div id="g24afn">—</div></div>
+      <div class="row"><div class="small" id="r21afn">قیمت هر گرم (۲۱ عیار)</div><div id="g21afn">—</div></div>
+      <div class="row"><div class="small" id="r18afn">قیمت هر گرم (۱۸ عیار)</div><div id="g18afn">—</div></div>
+    </div>
+    <div class="footer">
+      <div class="note" id="note">قیمت نهایی ممکن است شامل اجرت و سود فروشنده باشد.</div>
+    </div>
+    <div class="note" style="margin-top:12px;font-weight:600;color:var(--error);text-align:right;direction:rtl;display:flex;align-items:center;gap:6px;">
+      <span>⚠️</span>
+      <span>قبل از هر خرید، حتماً از قیمت دقیق محلی و نرخ معتبر مطمئن شوید. این ابزار فقط برای <strong>محاسبه تقریبی</strong> قیمت طلا ارائه شده و مسئولیتی در قبال اختلاف قیمت واقعی ندارد.</span>
+    </div>
+  </div>
+</div>
+
+<div class="modal-bg" id="modalBg">
+  <div class="modal">
+    <h2>درباره ما</h2>
+    <p>با من در شبکه‌های اجتماعی در ارتباط باشید:</p>
+    <div style="display:flex;justify-content:center;gap:24px;margin-top:16px;">
+      <a href="https://www.instagram.com/mahdiikhawari" target="_blank">
+        <img src="https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/instagram.svg" alt="Instagram">
+      </a>
+      <a href="https://t.me/Mx0di" target="_blank">
+        <img src="https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/telegram.svg" alt="Telegram">
+      </a>
+    </div>
+    <p style="text-align:center;margin-top:12px;font-weight:600;">Mahdi Khawari</p>
+    <button class="close" id="closeModal">بستن</button>
+  </div>
+</div>
+
+<script>
+(function(){
+const ounceEl=document.getElementById('ounce'),dollarEl=document.getElementById('dollar'),
+calcBtn=document.getElementById('calcBtn'),copyBtn=document.getElementById('copyBtn'),
+resetBtn=document.getElementById('resetBtn'),errEl=document.getElementById('err'),
+aboutBtn=document.getElementById('aboutBtn'),modalBg=document.getElementById('modalBg'),
+closeModal=document.getElementById('closeModal'),toggleBtn=document.getElementById('toggleTheme'),
+menuBtn=document.getElementById('menuBtn'),menu=document.getElementById('menu'),
+langBtn=document.getElementById('langBtn'),langOptions=document.getElementById('langOptions');
+
+const g24usdEl=document.getElementById('g24usd'),g24afnEl=document.getElementById('g24afn'),
+g21afnEl=document.getElementById('g21afn'),g18afnEl=document.getElementById('g18afn');
+
+const titleEl=document.getElementById('title'),leadEl=document.getElementById('lead'),
+labelOunce=document.getElementById('labelOunce'),labelDollar=document.getElementById('labelDollar'),
+r24usd=document.getElementById('r24usd'),r24afn=document.getElementById('r24afn'),
+r21afn=document.getElementById('r21afn'),r18afn=document.getElementById('r18afn'),
+noteEl=document.getElementById('note');
+
+const GRAMS_PER_OUNCE=31.1035;
+let currentLang='fa';
+
+function formatNumber(n){return Number(n).toLocaleString(currentLang==='fa'?'fa-IR':'en-US',{maximumFractionDigits:2,minimumFractionDigits:2});}
+function showError(msg){errEl.textContent=msg;errEl.style.display='block';}
+function clearError(){errEl.textContent='';errEl.style.display='none';}
+
+function calculate(){clearError();const ounce=parseFloat(ounceEl.value),dollar=parseFloat(dollarEl.value);if(!isFinite(ounce)||ounce<=0) return showError(currentLang==='fa'?'لطفاً قیمت اونس را درست وارد کنید.':'Please enter a valid ounce price.');if(!isFinite(dollar)||dollar<=0) return showError(currentLang==='fa'?'لطفاً نرخ دلار را درست وارد کنید.':'Please enter a valid dollar rate.');const g24_usd=ounce/GRAMS_PER_OUNCE,g24_afn=g24_usd*dollar,g21_afn=g24_afn*0.875,g18_afn=g24_afn*0.75;g24usdEl.textContent=formatNumber(g24_usd)+(currentLang==='fa'?' $':' $');g24afnEl.textContent=formatNumber(g24_afn)+(currentLang==='fa'?' AFN':' AFN');g21afnEl.textContent=formatNumber(g21_afn)+(currentLang==='fa'?' AFN':' AFN');g18afnEl.textContent=formatNumber(g18_afn)+(currentLang==='fa'?' AFN':' AFN');}
+
+calcBtn.onclick=calculate;
+[ounceEl,dollarEl].forEach(el=>{el.addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();calculate();}});});
+copyBtn.onclick=function(){
+  calculate(); // اول محاسبه کن
+  const siteLink = "https://mahdi.com"; // لینک سایت
+  const text = 
+    (currentLang==='fa'
+      ? `محاسبه قیمت طلا\nاونس: ${ounceEl.value}\nنرخ دلار: ${dollarEl.value}\n24 عیار: ${g24afnEl.textContent}\n21 عیار: ${g21afnEl.textContent}\n18 عیار: ${g18afnEl.textContent}\n\nبرای اطلاعات بیشتر به سایت مراجعه کنید: ${siteLink}`
+      : `Gold Price Calculation\nOunce: ${ounceEl.value}\nDollar rate: ${dollarEl.value}\n24K: ${g24afnEl.textContent}\n21K: ${g21afnEl.textContent}\n18K: ${g18afnEl.textContent}\n\nFor more info, visit: ${siteLink}`
+    );
+  navigator.clipboard.writeText(text).then(()=>{
+    copyBtn.textContent=(currentLang==='fa'?'کپی شد ✓':'Copied ✓');
+    setTimeout(()=>copyBtn.textContent=(currentLang==='fa'?'کپی نتایج':'Copy Results'),1500);
+  }).catch(()=>alert(currentLang==='fa'?'کپی ممکن نیست':'Cannot copy'));
+};
+resetBtn.onclick=function(){ounceEl.value='';dollarEl.value='';g24usdEl.textContent='—';g24afnEl.textContent='—';g21afnEl.textContent='—';g18afnEl.textContent='—';clearError();};
+aboutBtn.onclick=()=>modalBg.classList.add('show');
+closeModal.onclick=()=>modalBg.classList.remove('show');
+modalBg.onclick=e=>{if(e.target===modalBg) modalBg.classList.remove('show');};
+toggleBtn.onclick=()=>document.body.classList.toggle('dark');
+menuBtn.onclick=()=>menu.classList.toggle('show');
+
+// دکمه زبان داینامیک
+langBtn.onclick=()=>{langOptions.style.display=langOptions.style.display==='flex'?'none':'flex';}
+langOptions.querySelectorAll('button').forEach(btn=>{
+  btn.onclick=()=>{
+    currentLang=btn.dataset.lang;
+    updateLang(); 
+    updateLangBtn();
+    langOptions.style.display='none';
+  }
+});
+
+function updateLangBtn(){
+  langBtn.textContent=currentLang==='fa'?'🌐 زبان':'🌐 Language';
+}
+
+function updateLang(){
+  if(currentLang==='fa'){
+    titleEl.textContent='ماشین‌حساب طلای افغانستان';
+    leadEl.textContent='قیمت اونس جهانی و نرخ دلار را وارد کنید تا قیمت هر گرم طلا (۲۴/۲۱/۱۸ عیار) محاسبه شود.';
+    labelOunce.textContent='قیمت اونس جهانی (دلار)';
+    labelDollar.textContent='نرخ دلار (AFN)';
+    r24usd.textContent='قیمت هر گرم (۲۴ عیار) — دلار';
+    r24afn.textContent='قیمت هر گرم (۲۴ عیار) — افغانی';
+    r21afn.textContent='قیمت هر گرم (۲۱ عیار)';
+    r18afn.textContent='قیمت هر گرم (۱۸ عیار)';
+    noteEl.textContent='قیمت نهایی ممکن است شامل اجرت و سود فروشنده باشد.';
+  } else {
+    titleEl.textContent='Afghanistan Gold Calculator';
+    leadEl.textContent='Enter the global ounce price and dollar rate to calculate price per gram (24/21/18K).';
+    labelOunce.textContent='Ounce Price (USD)';
+    labelDollar.textContent='Dollar Rate (AFN)';
+    r24usd.textContent='24K per gram — USD';
+    r24afn.textContent='24K per gram — AFN';
+    r21afn.textContent='21K per gram';
+    r18afn.textContent='18K per gram';
+    noteEl.textContent='Final price may include jeweler fees and profit.';
+  }
+  calculate();
+  updateLangBtn();
+}
+
+updateLangBtn();
+calculate();
+})();
+</script>
+</body>
+</html>
