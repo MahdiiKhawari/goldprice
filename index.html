@@ -151,7 +151,7 @@ calcBtn.onclick=calculate;
 [ounceEl,dollarEl].forEach(el=>{el.addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();calculate();}});});
 copyBtn.onclick=function(){
   calculate(); // اول محاسبه کن
-  const siteLink = "https://mahdi.com"; // لینک سایت
+  const siteLink = "https://mahdiikhawari.github.io/goldprice/"; // لینک سایت
   const text = 
     (currentLang==='fa'
       ? `محاسبه قیمت طلا\nاونس: ${ounceEl.value}\nنرخ دلار: ${dollarEl.value}\n24 عیار: ${g24afnEl.textContent}\n21 عیار: ${g21afnEl.textContent}\n18 عیار: ${g18afnEl.textContent}\n\nبرای اطلاعات بیشتر به سایت مراجعه کنید: ${siteLink}`
