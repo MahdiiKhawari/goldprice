@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="fa">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>محاسبه قیمت طلای افغانستان</title>
+<meta name="description" content="محاسبه قیمت تقریبی طلای افغانستان بر اساس وزن و درصد اجرت. ابزار ساده و سریع برای خریداران و فروشندگان طلا.">
+<link rel="icon" href="favicon.png" type="image/png">
+<style>
+:root{
+  --bg:#f4f6f8; --card-bg:#fff; --accent:#1f7a8c; --accent-hover:#145c6b;
+  --text:#111827; --muted:#6b7280; --success:#16a34a; --error:#dc2626;
+}
+body{margin:0;font-family:Segoe UI, Roboto, Arial,sans-serif;background:var(--bg);color:var(--text);}
+.wrap{max-width:600px;margin:30px auto;padding:20px;}
+.card{background:var(--card-bg);border-radius:12px;padding:20px;box-shadow:0 4px 15px rgba(0,0,0,0.1);}
+h1{font-size:20px;margin-bottom:10px;text-align:right;direction:rtl;}
+label{display:block;margin:10px 0 4px;text-align:right;}
+input[type=number]{width:100%;padding:10px;font-size:15px;border-radius:8px;border:1px solid #ccc;box-sizing:border-box;text-align:right;}
+button{padding:10px 16px;border:none;border-radius:8px;background:var(--accent);color:#fff;font-weight:600;cursor:pointer;margin-top:12px;}
+button:hover{background:var(--accent-hover);}
+.result{margin-top:16px;font-weight:600;color:var(--success);text-align:right;}
+.note{margin-top:12px;font-size:13px;color:var(--muted);text-align:right;}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="card">
+    <h1>محاسبه قیمت طلای مورد نظر شما</h1>
+    <label for="weight">وزن طلا (گرم)</label>
+    <input type="number" id="weight" min="0" step="0.01" placeholder="مثلاً 5">
+    
+    <label for="fee">اجرت (%)</label>
+    <input type="number" id="fee" min="0" step="0.1" value="5">
+    
+    <button id="calcBtn">محاسبه قیمت</button>
+    
+    <div class="result" id="totalPrice">—</div>
+    <div class="note">قیمت تقریبی است و ممکن است با نرخ واقعی متفاوت باشد. لطفا قبل از خرید دقت فرمایید</div>
+  </div>
+</div>
+
+<script>
+// این قیمت هر گرم از صفحه اصلی گرفته می‌شود یا می‌توان به صورت ثابت قرار داد
+let pricePerGram = 135; // مثال: قیمت هر گرم 24 عیار به افغانی، بعداً می‌توان JS صفحه اصلی را خواند
+
+document.getElementById('calcBtn').onclick = function(){
+  const weight = parseFloat(document.getElementById('weight').value);
+  const fee = parseFloat(document.getElementById('fee').value);
+  if(!isFinite(weight) || weight<=0){ alert('وزن معتبر وارد کنید'); return; }
+  if(!isFinite(fee) || fee<0){ alert('اجرت معتبر وارد کنید'); return; }
+
+  const total = weight * pricePerGram * (1 + fee/100);
+  document.getElementById('totalPrice').textContent = `قیمت تقریبی: ${total.toLocaleString('fa-IR')} افغانی`;
+};
+</script>
+</body>
+</html>
