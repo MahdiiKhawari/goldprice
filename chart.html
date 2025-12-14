@@ -1,22 +1,66 @@
 <!doctype html>
 <html lang="fa">
 <head>
-<meta charset="utf-8">
-<title>نمودار قیمت انس جهانی طلا</title>
-<meta name="description" content="نمودار و بررسی قیمت انس جهانی طلا و تاثیر آن بر بازار طلا.">
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>نمودار قیمت اونس جهانی</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<style>
+body{font-family:"Segoe UI", Roboto, Arial,sans-serif;background:#f4f6f8;margin:0;padding:20px;}
+.wrap{max-width:800px;margin:0 auto;}
+.card{background:#fff;border-radius:16px;padding:24px;box-shadow:0 8px 20px rgba(0,0,0,0.1);}
+h1{text-align:center;}
+.back-btn{display:block;margin:20px auto;text-align:center;text-decoration:none;background:#1f7a8c;color:#fff;padding:10px 16px;border-radius:10px;width:200px;}
+.price-box{display:flex;justify-content:space-around;margin-bottom:24px;padding:16px;background:#e6eef1;border-radius:10px;}
+.price-box div{text-align:center;font-weight:600;}
+canvas{background:#fff;border-radius:10px;padding:10px;}
+</style>
 </head>
-<body style="font-family:tahoma;direction:rtl;padding:20px">
+<body>
+<div class="wrap">
+  <div class="card">
+    <h1>نمودار قیمت اونس جهانی طلا</h1>
+    <div class="price-box">
+      <div>قیمت اونس: <span id="ounce">4223</span> $</div>
+      <div>نرخ دلار: <span id="dollar">66.25</span> AFN</div>
+    </div>
+    <canvas id="goldChart" height="300"></canvas>
+    <a href="index.html" class="back-btn">⬅ بازگشت به ماشین‌حساب طلا</a>
+  </div>
+</div>
 
-<h1>نمودار قیمت انس جهانی طلا</h1>
+<script>
+// داده تستی برای نمودار
+const labels = ["دیروز","۲ روز پیش","۳ روز پیش","۴ روز پیش","۵ روز پیش","۶ روز پیش","۷ روز پیش"];
+const data = {
+  labels: labels,
+  datasets: [{
+    label: 'قیمت اونس جهانی (USD)',
+    data: [4210, 4225, 4230, 4220, 4240, 4235, 4223],
+    borderColor: '#1f7a8c',
+    backgroundColor: 'rgba(31,122,140,0.2)',
+    fill:true,
+    tension:0.3
+  }]
+};
 
-<p>
-در این صفحه می‌توانید تغییرات قیمت انس جهانی طلا را مشاهده و تحلیل کنید.
-این اطلاعات به شما کمک می‌کند تصمیم بهتری برای خرید یا فروش طلا بگیرید.
-</p>
+const config = {
+  type: 'line',
+  data: data,
+  options: {
+    responsive:true,
+    plugins: {
+      legend: {display:true,position:'top'},
+      tooltip: {mode:'index',intersect:false}
+    },
+    scales: {
+      y: {beginAtZero:false},
+      x: {display:true}
+    }
+  }
+};
 
-<p>
-<a href="index.html">⬅ بازگشت به ماشین‌حساب قیمت طلا</a>
-</p>
-
+new Chart(document.getElementById('goldChart'), config);
+</script>
 </body>
 </html>
