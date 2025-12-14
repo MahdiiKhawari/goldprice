@@ -172,7 +172,12 @@ closeModal.onclick=()=>modalBg.classList.remove('show');
 modalBg.onclick=e=>{if(e.target===modalBg) modalBg.classList.remove('show');};
 toggleBtn.onclick=()=>document.body.classList.toggle('dark');
 menuBtn.onclick=()=>menu.classList.toggle('show');
-
+// وقتی روی هر دکمه یا لینک منو کلیک شد، منو بسته شود
+menu.querySelectorAll('button, a').forEach(el => {
+  el.addEventListener('click', () => {
+    menu.classList.remove('show'); // منو بسته می‌شود
+  });
+});
 // دکمه زبان داینامیک
 langBtn.onclick=()=>{langOptions.style.display=langOptions.style.display==='flex'?'none':'flex';}
 langOptions.querySelectorAll('button').forEach(btn=>{
