@@ -151,6 +151,9 @@ function clearError(){errEl.textContent='';errEl.style.display='none';}
 
 function calculate(){clearError();const ounce=parseFloat(ounceEl.value),dollar=parseFloat(dollarEl.value);if(!isFinite(ounce)||ounce<=0) return showError(currentLang==='fa'?'لطفاً قیمت اونس را درست وارد کنید.':'Please enter a valid ounce price.');if(!isFinite(dollar)||dollar<=0) return showError(currentLang==='fa'?'لطفاً نرخ دلار را درست وارد کنید.':'Please enter a valid dollar rate.');const g24_usd=ounce/GRAMS_PER_OUNCE,g24_afn=g24_usd*dollar,g21_afn=g24_afn*0.875,g18_afn=g24_afn*0.75;g24usdEl.textContent=formatNumber(g24_usd)+(currentLang==='fa'?' $':' $');g24afnEl.textContent=formatNumber(g24_afn)+(currentLang==='fa'?' AFN':' AFN');g21afnEl.textContent=formatNumber(g21_afn)+(currentLang==='fa'?' AFN':' AFN');g18afnEl.textContent=formatNumber(g18_afn)+(currentLang==='fa'?' AFN':' AFN');}
 
+  menu.onclick = function(e){
+  e.stopPropagation();
+};
 calcBtn.onclick=calculate;
 [ounceEl,dollarEl].forEach(el=>{el.addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();calculate();}});});
 copyBtn.onclick=function(){
@@ -178,18 +181,20 @@ menu.querySelectorAll('button, a').forEach(el => {
     menu.classList.remove('show'); // منو بسته می‌شود
   });
 });
-// دکمه زبان داینامیک
-langBtn.onclick = (e) => {
-  e.stopPropagation(); // این باعث می‌شود کلیک روی زبان منو را نبندد
-  langOptions.style.display = langOptions.style.display==='flex' ? 'none' : 'flex';
-}
+langBtn.onclick = function(e){
+  e.stopPropagation();
+  langOptions.style.display =
+    langOptions.style.display === 'flex' ? 'none' : 'flex';
+};
 langOptions.querySelectorAll('button').forEach(btn=>{
-  btn.onclick=()=>{
-    currentLang=btn.dataset.lang;
-    updateLang(); 
+  btn.onclick = function(e){
+    e.stopPropagation();          // کلیک باعث بستن منو نشود
+    currentLang = btn.dataset.lang;
+    updateLang();
     updateLangBtn();
-    langOptions.style.display='none';
-  }
+    langOptions.style.display = 'none'; // گزینه‌های زبان بسته شود
+    menu.classList.remove('show');      // منوی اصلی بسته شود
+  };
 });
 
 function updateLangBtn(){
