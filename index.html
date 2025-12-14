@@ -179,7 +179,10 @@ menu.querySelectorAll('button, a').forEach(el => {
   });
 });
 // دکمه زبان داینامیک
-langBtn.onclick=()=>{langOptions.style.display=langOptions.style.display==='flex'?'none':'flex';}
+langBtn.onclick = (e) => {
+  e.stopPropagation(); // این باعث می‌شود کلیک روی زبان منو را نبندد
+  langOptions.style.display = langOptions.style.display==='flex' ? 'none' : 'flex';
+}
 langOptions.querySelectorAll('button').forEach(btn=>{
   btn.onclick=()=>{
     currentLang=btn.dataset.lang;
